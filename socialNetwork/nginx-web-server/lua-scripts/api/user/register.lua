@@ -16,16 +16,13 @@ function _M.RegisterUser()
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
-  local parent_span_context = tracer:binary_extract(
-      ngx.var.opentracing_binary_context)
-  local span = tracer:start_span("RegisterUser",
-      {["references"] = {{"child_of", parent_span_context}}})
+  local span_context = tracer:binary_extract(ngx.var.opentracing_binary_context)
   local carrier = {}
-  tracer:text_map_inject(span:context(), carrier)
+  tracer:text_map_inject(span_context, carrier)
 
   ngx.req.read_body()
   local post = ngx.req.get_post_args()
-
+  
   if (_StrIsEmpty(post.first_name) or _StrIsEmpty(post.last_name) or
       _StrIsEmpty(post.username) or _StrIsEmpty(post.password)) then
     ngx.status = ngx.HTTP_BAD_REQUEST
@@ -37,7 +34,7 @@ function _M.RegisterUser()
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. k8s_suffix, 9090)
 
   local status, err = pcall(client.RegisterUser, client, req_id, post.first_name,
-      post.last_name, post.username, post.password, carrier)
+    post.last_name, post.username, post.password, carrier)
   GenericObjectPool:returnConnection(client)
 
   if not status then
@@ -54,7 +51,6 @@ function _M.RegisterUser()
     ngx.redirect("../../index.html")
     ngx.exit(ngx.HTTP_OK)
   end
-  span:finish()
 end
 
 return _M

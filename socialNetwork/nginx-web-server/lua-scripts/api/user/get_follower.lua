@@ -18,10 +18,6 @@ local function _LoadFollwer(data)
   return follower_list
 end
 
-
-
-
-
 function _M.GetFollower()
   local bridge_tracer = require "opentracing_bridge_tracer"
   local ngx = ngx
@@ -33,12 +29,9 @@ function _M.GetFollower()
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
-  local parent_span_context = tracer:binary_extract(
-      ngx.var.opentracing_binary_context)
-  local span = tracer:start_span("GetFollower",
-      {["references"] = {{"child_of", parent_span_context}}})
+  local span_context = tracer:binary_extract(ngx.var.opentracing_binary_context)
   local carrier = {}
-  tracer:text_map_inject(span:context(), carrier)
+  tracer:text_map_inject(span_context, carrier)
 
   if (_StrIsEmpty(ngx.var.cookie_login_token)) then
     ngx.status = ngx.HTTP_UNAUTHORIZED
@@ -65,7 +58,7 @@ function _M.GetFollower()
     local client = GenericObjectPool:connection(
       SocialGraphServiceClient, "social-graph-service" .. k8s_suffix, 9090)
     local status, ret = pcall(client.GetFollowers, client, req_id,
-        user_id, carrier)
+      user_id, carrier)
     GenericObjectPool:returnConnection(client)
     if not status then
       ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR
@@ -82,7 +75,7 @@ function _M.GetFollower()
     else
       local follower_list = _LoadFollwer(ret)
       ngx.header.content_type = "application/json; charset=utf-8"
-      ngx.say(cjson.encode(follower_list) )
+      ngx.say(cjson.encode(follower_list))
     end
   end
 end

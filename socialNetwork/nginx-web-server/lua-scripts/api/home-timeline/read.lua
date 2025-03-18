@@ -60,12 +60,10 @@ function _M.ReadHomeTimeline()
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
-  local parent_span_context = tracer:binary_extract(
+  local span_context = tracer:binary_extract(
       ngx.var.opentracing_binary_context)
-  local span = tracer:start_span("Login",
-      {["references"] = {{"child_of", parent_span_context}}})
   local carrier = {}
-  tracer:text_map_inject(span:context(), carrier)
+  tracer:text_map_inject(span_context, carrier)
 
   ngx.req.read_body()
   local args = ngx.req.get_uri_args()

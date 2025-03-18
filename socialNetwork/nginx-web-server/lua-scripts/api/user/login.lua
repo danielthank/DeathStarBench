@@ -17,12 +17,9 @@ function _M.Login()
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
-  local parent_span_context = tracer:binary_extract(
-      ngx.var.opentracing_binary_context)
-  local span = tracer:start_span("Login",
-      {["references"] = {{"child_of", parent_span_context}}})
+  local span_context = tracer:binary_extract(ngx.var.opentracing_binary_context)
   local carrier = {}
-  tracer:text_map_inject(span:context(), carrier)
+  tracer:text_map_inject(span_context, carrier)
 
   ngx.req.read_body()
   local args = ngx.req.get_post_args()
@@ -40,7 +37,7 @@ function _M.Login()
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. k8s_suffix, 9090)
 
   local status, ret = pcall(client.Login, client, req_id,
-      args.username, args.password, carrier)
+    args.username, args.password, carrier)
   GenericObjectPool:returnConnection(client)
 
   if not status then
@@ -58,12 +55,11 @@ function _M.Login()
   else
     ngx.header.content_type = "text/plain"
     ngx.header["Set-Cookie"] = "login_token=" .. ret .. "; Path=/; Expires="
-        .. ngx.cookie_time(ngx.time() + ngx.shared.config:get("cookie_ttl"))
+      .. ngx.cookie_time(ngx.time() + ngx.shared.config:get("cookie_ttl"))
 
     ngx.redirect("../../main.html?username=" .. args.username)
     ngx.exit(ngx.HTTP_OK)
   end
-  span:finish()
 end
 
 return _M
