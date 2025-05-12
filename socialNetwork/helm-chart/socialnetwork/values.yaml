@@ -49,10 +49,10 @@ global:
     localAgentHostPort: jaeger:6831
     queueSize: 1000000
     bufferFlushInterval: 10
-    samplerType: probabilistic
-    samplerParam: 0.1
+    samplerType: const
+    samplerParam: 1
     disabled: false
-    logSpans: false
+    logSpans: true
 
 mongodb-sharded:
   fullnameOverride: mongodb-sharded

@@ -1,7 +1,6 @@
-version: "3.9"
 services:
   social-graph-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: social-graph-service
     #    ports:
     #      - 10000:9090
@@ -37,7 +36,7 @@ services:
     restart: always
 
   compose-post-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: compose-post-service
     #    ports:
     #      - 10001:9090
@@ -50,7 +49,7 @@ services:
       - ./config:/social-network-microservices/config
 
   post-storage-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: post-storage-service
     ports:
       - 10002:9090
@@ -79,7 +78,7 @@ services:
     restart: always
 
   user-timeline-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: user-timeline-service
     #    ports:
     #      - 10003:9090
@@ -108,7 +107,7 @@ services:
     restart: always
 
   url-shorten-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: url-shorten-service
     #    ports:
     #      - 10004:9090
@@ -137,7 +136,7 @@ services:
     restart: always
 
   user-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: user-service
     #    ports:
     #      - 10005:9090
@@ -166,7 +165,7 @@ services:
     restart: always
 
   media-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: media-service
     #    ports:
     #      - 10006:9090
@@ -195,7 +194,7 @@ services:
     restart: always
 
   text-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: text-service
     #    ports:
     #      - 10007:9090
@@ -208,7 +207,7 @@ services:
       - ./config:/social-network-microservices/config
 
   unique-id-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: unique-id-service
     #    ports:
     #      - 10008:9090
@@ -221,7 +220,7 @@ services:
       - ./config:/social-network-microservices/config
 
   user-mention-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: user-mention-service
     #    ports:
     #      - 10009:9090
@@ -234,7 +233,7 @@ services:
       - ./config:/social-network-microservices/config
 
   home-timeline-service:
-    image: deathstarbench/social-network-microservices:latest
+    image: social-network:latest
     hostname: home-timeline-service
     #    ports:
     #      - 10010:9090
@@ -277,7 +276,7 @@ services:
       - ./media-frontend/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
 
   jaeger-agent:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.62.0
     ports:
       #      - 5775:5775/udp
       #      - 6831:6831/udp
