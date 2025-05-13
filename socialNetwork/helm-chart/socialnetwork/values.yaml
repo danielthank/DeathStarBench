@@ -16,7 +16,7 @@ global:
   imagePullPolicy: "IfNotPresent"
   restartPolicy: Always
   serviceType: ClusterIP
-  dockerRegistry: docker.io
+  dockerRegistry: 624568431999.dkr.ecr.us-east-1.amazonaws.com
   defaultImageVersion: latest
   redis:
     cluster:
